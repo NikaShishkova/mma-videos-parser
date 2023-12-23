@@ -69,14 +69,12 @@ def parse_video(video_path: str) -> Dict:
     logger.info(
         f"video stats: fps={fps}, frame_count={frame_count}, duration(S)={duration}, duration(M:S)={minutes}:{seconds}'")
 
-    # videos_array = get_numpy_array_from_video(video_path)
 
     start_time = time.time()
     all_frames = {}
     counter_shot = 0
     frame_info: Dict = None
 
-    # without saving the video
     cap = cv2.VideoCapture(video_path)
 
     current_second = 0
@@ -112,61 +110,6 @@ def parse_video(video_path: str) -> Dict:
     end_time = time.time()
     logger.info(f"execution time: {end_time - start_time}s")
     return all_frames
-
-    # end new part
-
-    #
-    # for sec in range(duration):
-    #     image = videos_array[:, :, sec]
-    #     num_frame = get_frame_type(image)
-    #     if counter_shot > 0 and num_frame == -1:
-    #         if frame_info:
-    #             frame_info['duration'] = counter_shot
-    #             new_sec = sec - counter_shot
-    #             time_on_video = convert_time_m_s(new_sec)
-    #             all_frames[time_on_video] = frame_info
-    #         counter_shot = 0
-    #
-    #     if num_frame == 0 or num_frame == 1 or num_frame == 3:
-    #         counter_shot += 1
-    #         if counter_shot == 3:
-    #             frame_info = find_info_in_frame(image, num_frame)
-    #
-    #     if num_frame == 2:
-    #         frame_info = find_info_in_frame(image, num_frame)
-    #         if frame_info:
-    #             time_on_video = convert_time_m_s(sec)
-    #             all_frames[time_on_video] = frame_info
-    # end_time = time.time()
-    # logger.info(f"execution time: {end_time - start_time}s")
-    # return all_frames
-
-
-# # create a separate array for convenient visualization
-# def get_numpy_array_from_video(video_path) -> np.array:
-#     cap = cv2.VideoCapture(video_path)
-#     fps = cap.get(cv2.CAP_PROP_FPS)  # OpenCV v2.x used "CV_CAP_PROP_FPS"
-#     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-#     duration = frame_count / fps
-#     duration = int(duration)
-#
-#     videos_array = np.zeros((720, 1280, duration), dtype='uint8')
-#
-#     cap = cv2.VideoCapture(video_path)
-#
-#     total_frame = 0
-#     ind = 0
-#     while True:
-#         success, frame = cap.read()
-#         if success:
-#             total_frame += 1
-#             if total_frame % fps == 0:
-#                 grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-#                 videos_array[:, :, ind] = grayscale
-#                 ind += 1
-#         else:
-#             break
-#     return videos_array
 
 
 def calc_difference_between_areas(slices, image):
