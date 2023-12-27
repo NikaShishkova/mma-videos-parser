@@ -13,7 +13,7 @@ reader = easyocr.Reader(['en'], gpu=False)
 
 logger = logging.getLogger(__name__)
 
-CONFIDENCE_LEVEL = 0.5
+CONFIDENCE_LEVEL = 0.4
 
 INFO_TYPE = {-1: "information_not_found",
              0: "primary_fighter_info",
@@ -85,7 +85,6 @@ def parse_video(video_path: str) -> Dict:
             break
 
         if frame_idx % fps == 0:
-            current_second += 1
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             frame_type = get_frame_type(image)
             if counter_shot > 0 and frame_type == -1:
@@ -106,6 +105,7 @@ def parse_video(video_path: str) -> Dict:
                 if frame_info:
                     time_on_video = convert_time_m_s(current_second)
                     all_frames[time_on_video] = frame_info
+            current_second += 1
 
     end_time = time.time()
     logger.info(f"execution time: {end_time - start_time}s")
@@ -202,28 +202,28 @@ def get_extensive_fighter_info(image) -> Dict[str, str]:
         texts_array = reader.readtext(image[efi_coordinates[11][0], efi_coordinates[11][1]])
         fighter_2['country'] = from_texts_array_to_text(texts_array)
 
-        texts_array = reader.readtext(image[efi_coordinates[0][0], efi_coordinates[0][1]])
+        texts_array = reader.readtext(image[efi_coordinates[0][0], efi_coordinates[0][1]], allowlist ='0123456789-')
         fighter_1['record'] = from_texts_array_to_text(texts_array)
 
-        texts_array = reader.readtext(image[efi_coordinates[1][0], efi_coordinates[1][1]])
+        texts_array = reader.readtext(image[efi_coordinates[1][0], efi_coordinates[1][1]], allowlist ='0123456789-')
         fighter_2['record'] = from_texts_array_to_text(texts_array)
 
-        texts_array = reader.readtext(image[efi_coordinates[2][0], efi_coordinates[2][1]])
+        texts_array = reader.readtext(image[efi_coordinates[2][0], efi_coordinates[2][1]], allowlist ='0123456789')
         fighter_1['age'] = from_texts_array_to_text(texts_array)
 
-        texts_array = reader.readtext(image[efi_coordinates[3][0], efi_coordinates[3][1]])
+        texts_array = reader.readtext(image[efi_coordinates[3][0], efi_coordinates[3][1]], allowlist ='0123456789')
         fighter_2['age'] = from_texts_array_to_text(texts_array)
 
-        texts_array = reader.readtext(image[efi_coordinates[4][0], efi_coordinates[4][1]])
+        texts_array = reader.readtext(image[efi_coordinates[4][0], efi_coordinates[4][1]], allowlist ='0123456789')
         fighter_1['height'] = from_texts_array_to_text(texts_array)
 
-        texts_array = reader.readtext(image[efi_coordinates[5][0], efi_coordinates[5][1]])
+        texts_array = reader.readtext(image[efi_coordinates[5][0], efi_coordinates[5][1]], allowlist ='0123456789')
         fighter_2['height'] = from_texts_array_to_text(texts_array)
 
-        texts_array = reader.readtext(image[efi_coordinates[6][0], efi_coordinates[6][1]])
+        texts_array = reader.readtext(image[efi_coordinates[6][0], efi_coordinates[6][1]], allowlist ='0123456789')
         fighter_1['weight'] = from_texts_array_to_text(texts_array)
 
-        texts_array = reader.readtext(image[efi_coordinates[7][0], efi_coordinates[7][1]])
+        texts_array = reader.readtext(image[efi_coordinates[7][0], efi_coordinates[7][1]], allowlist ='0123456789')
         fighter_2['weight'] = from_texts_array_to_text(texts_array)
 
         frame_info['fighter_1'] = fighter_1
@@ -269,7 +269,7 @@ def get_fight_info(image) -> Dict[str, str]:
 
     frame_info = {'type': INFO_TYPE[2]}
 
-    texts_array = reader.readtext(image[fi_coordinates[0][0][0], fi_coordinates[0][0][1]])
+    texts_array = reader.readtext(image[fi_coordinates[0][0][0], fi_coordinates[0][0][1]], allowlist ='0123456789:')
     text = from_texts_array_to_text(texts_array)
     if text:
         frame_info['time'] = get_time_from_text(text)
